@@ -1,9 +1,37 @@
-import { Button } from "@chakra-ui/button"
-import { Box, Flex, Heading, HStack, Text } from "@chakra-ui/layout"
+import React from "react"
+import { Button, ButtonProps } from "@chakra-ui/button"
+import { Box, Flex, HStack } from "@chakra-ui/layout"
 import { chakra, HTMLChakraProps, useColorModeValue } from "@chakra-ui/system"
 import { useViewportScroll } from "framer-motion"
-import React from "react"
+import { useRouter } from "next/dist/client/router"
 import { ThemeButton } from "./theme-button"
+
+interface NavLinkProps extends ButtonProps {
+  to: string
+}
+
+export const NavLink: React.FC<NavLinkProps> = ({ children, to, ...rest }) => {
+  const router = useRouter()
+
+  const handleClick = () => router.push(to)
+  const color = useColorModeValue("purple.500", "purple.200")
+
+  const active = router.pathname == to
+
+  return (
+    <Button
+      variant={active ? "ghost" : "solid"}
+      isActive={active}
+      onClick={handleClick}
+      _active={{
+        color: color,
+      }}
+      {...rest}
+    >
+      {children}
+    </Button>
+  )
+}
 
 export const Header: React.FC<HTMLChakraProps<"header">> = (props) => {
   const bg = useColorModeValue("white", "gray.800")
@@ -39,8 +67,9 @@ export const Header: React.FC<HTMLChakraProps<"header">> = (props) => {
           alignItems="center"
         >
           <HStack>
-            <Button>About</Button>
-            <Button>Blog</Button>
+            <NavLink to="/">Home</NavLink>
+            <NavLink to="/blogs">Blogs</NavLink>
+            <NavLink to="/links">Links</NavLink>
           </HStack>
           <Box>
             <ThemeButton />
